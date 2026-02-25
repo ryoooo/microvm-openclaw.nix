@@ -53,19 +53,12 @@
   };
   networking.nameservers = [ "192.168.83.1" ];
 
-  # Docker veth を systemd-networkd から除外
-  systemd.network.networks."99-docker-veth" = {
-    matchConfig.Name = "veth*";
-    linkConfig.Unmanaged = true;
-  };
-
   # ユーザー
   users.users.openclaw = {
     isNormalUser = true;
     home = "/persist/openclaw";
     createHome = true;
     group = "openclaw";
-    extraGroups = [ "docker" ];
     linger = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAA... your-key-here"
@@ -140,14 +133,9 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    curl jq docker-compose
+    curl jq
     poppler-utils  # pdftoppm: Gateway の PDF→画像変換 (Vision フォールバック) に必要
   ];
-
-  virtualisation.docker = {
-    enable = true;
-    autoPrune.enable = true;
-  };
 
   services.openssh = {
     enable = true;
