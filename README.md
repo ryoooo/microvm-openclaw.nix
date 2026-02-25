@@ -49,6 +49,10 @@ Declarative NixOS configuration that isolates an AI agent ([OpenClaw](https://op
 - [nix-openclaw-defender](https://github.com/ryoooo/nix-openclaw-defender) — Nix flake that packages [openclaw-defender](https://github.com/nyosegawa/openclaw-defender) (fork) via `buildNpmPackage` and provides ML server NixOS modules
 - [nix-steipete-tools/gogcli](https://github.com/openclaw/nix-steipete-tools) — Google Workspace CLI skill
 
+## Blog Post
+
+[余ったパーツで NixOS + microVM のセキュアな OpenClaw 箱を作った話](https://zenn.dev/ryorn/articles/62cc63fe84c98b) (Japanese)
+
 ## Note
 
-This repository is a public reference codebase for a technical article. Desktop environment configuration (Hyprland, WezTerm, etc.) has been omitted. Generate your own `hardware-configuration.nix` with `nixos-generate-config`.
+This repository is a public reference codebase for the article above. Desktop environment configuration (Hyprland, WezTerm, etc.) has been omitted. Generate your own `hardware-configuration.nix` with `nixos-generate-config`.
