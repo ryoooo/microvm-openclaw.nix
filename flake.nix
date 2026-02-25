@@ -8,11 +8,9 @@
     };
     wezterm = {
       url = "github:wez/wezterm?dir=nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     microvm = {
       url = "github:microvm-nix/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
@@ -28,6 +26,7 @@
     nix-steipete-gogcli = {
       url = "github:openclaw/nix-steipete-tools?dir=tools/gogcli";
       flake = true;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

@@ -115,16 +115,16 @@
     glib.out
     libGL
     mesa
-    xorg.libX11
-    xorg.libxcb
-    xorg.libXext
-    xorg.libXrender
-    xorg.libXi
-    xorg.libXfixes
-    xorg.libXcursor
-    xorg.libXrandr
-    xorg.libSM
-    xorg.libICE
+    libx11
+    libxcb
+    libxext
+    libxrender
+    libxi
+    libxfixes
+    libxcursor
+    libxrandr
+    libsm
+    libice
     fontconfig
     freetype
     libpng
