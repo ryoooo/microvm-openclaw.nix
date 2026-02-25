@@ -46,7 +46,7 @@ Declarative NixOS configuration that isolates an AI agent ([OpenClaw](https://op
 
 - [microvm.nix](https://github.com/microvm-nix/microvm.nix) — Cloud Hypervisor-based NixOS microVMs
 - [nix-openclaw](https://github.com/openclaw/nix-openclaw) — OpenClaw Home Manager module + overlay
-- [nix-openclaw-defender](https://github.com/ryoooo/nix-openclaw-defender) — 3-layer defender plugin Nix package + ML server NixOS modules
+- [nix-openclaw-defender](https://github.com/ryoooo/nix-openclaw-defender) — Nix flake that packages [openclaw-defender](https://github.com/nyosegawa/openclaw-defender) (fork) via `buildNpmPackage` and provides ML server NixOS modules
 - [nix-steipete-tools/gogcli](https://github.com/openclaw/nix-steipete-tools) — Google Workspace CLI skill
 
 ## Note
