@@ -1,54 +1,54 @@
 # microvm-openclaw.nix
 
-NixOS + [microvm.nix](https://github.com/microvm-nix/microvm.nix) で AI エージェント ([OpenClaw](https://openclaw.dev)) をカーネルレベル隔離する宣言的構成。
+Declarative NixOS configuration that isolates an AI agent ([OpenClaw](https://openclaw.dev)) at the kernel level using [microvm.nix](https://github.com/microvm-nix/microvm.nix).
 
-## アーキテクチャ
+## Architecture
 
 ```
-┌─ NixOS ホスト ──────────────────────────────────────┐
-│  Unbound (DNS ログ)  nftables (egress ログ)  auditd │
+┌─ NixOS Host ────────────────────────────────────────┐
+│  Unbound (DNS log)  nftables (egress log)  auditd   │
 │                                                      │
 │  ┌─ OpenClaw VM (4GB) ───────────┐                   │
 │  │  Gateway + Discord             │                   │
-│  │  openclaw-defender (3層防御)   │                   │
+│  │  openclaw-defender (3 layers)  │                   │
 │  │    Layer 1: regex              │   ┌─ gogcli VM ─┐│
 │  │    Layer 2: Prompt Guard 2     │──→│  Google API  ││
-│  │            + DeBERTa v3        │SSH│  OAuth 隔離  ││
+│  │            + DeBERTa v3        │SSH│  OAuth jail  ││
 │  │    Layer 3: Cerebras LLM      │   └──────────────┘│
 │  └────────────────────────────────┘                   │
-│        virtiofs /run/secrets (buduroiu パターン)      │
+│        virtiofs /run/secrets (buduroiu pattern)       │
 └──────────────────────────────────────────────────────┘
 ```
 
-## ファイル構成
+## Files
 
-| ファイル | 役割 |
+| File | Role |
 |---|---|
-| `flake.nix` | Flake inputs (nixpkgs, home-manager, microvm, nix-openclaw, nix-openclaw-defender 等) |
-| `configuration.nix` | ホスト設定: microVM ネットワーク (bridge + NAT), nftables, Unbound, auditd, secrets サービス |
-| `vms/openclaw.nix` | OpenClaw VM: Gateway, defender プラグイン, ML サーバー, Docker, HM 設定 |
-| `vms/gogcli.nix` | gogcli VM: Google Workspace CLI 隔離, SSH command= 制限, 監査ログ |
-| `docs/SOUL.md` | エージェントのキャラクター定義 |
-| `docs/AGENTS.md` | ツール実行ポリシー (読み取り自動/書き込み要承認) |
-| `docs/TOOLS.md` | 利用可能ツール一覧 |
+| `flake.nix` | Flake inputs (nixpkgs, home-manager, microvm, nix-openclaw, nix-openclaw-defender, etc.) |
+| `configuration.nix` | Host config: microVM networking (bridge + NAT), nftables, Unbound, auditd, secrets services |
+| `vms/openclaw.nix` | OpenClaw VM: Gateway, defender plugin, ML servers, Docker, Home Manager |
+| `vms/gogcli.nix` | gogcli VM: Google Workspace CLI isolation, SSH `command=` restriction, audit logging |
+| `docs/SOUL.md` | Agent character definition |
+| `docs/AGENTS.md` | Tool execution policy (read auto-exec / write requires approval) |
+| `docs/TOOLS.md` | Available tools |
 
-## セキュリティ多層防御
+## Defense in Depth
 
-- **KVM 隔離**: microvm.nix (Cloud Hypervisor) でカーネル分離。Docker コンテナのカーネル共有リスクを排除
-- **ネットワーク監視**: Unbound DNS ログ + nftables egress ログで全通信を記録
-- **VM 間通信制限**: OpenClaw → gogcli は SSH のみ許可、逆方向 drop
-- **シークレット管理**: virtiofs で `/run/secrets/` にマウント、gateway-token は起動ごとに再生成
-- **プロンプトインジェクション防御**: [openclaw-defender](https://github.com/nyosegawa/openclaw-defender) 3 層 (regex → ML 分類器 → LLM 判定)
-- **OAuth 隔離**: Google OAuth トークンは gogcli VM 内のみ保持、SSH `command=` でサブコマンド制限
-- **監査**: auditd で secrets ディレクトリへのアクセスを記録
+- **KVM isolation** — microvm.nix (Cloud Hypervisor) provides kernel-level separation, eliminating the shared-kernel risk of Docker containers
+- **Network observability** — Unbound DNS query logging + nftables egress logging for all VM traffic
+- **Inter-VM restriction** — Only OpenClaw → gogcli SSH is allowed; reverse direction is dropped
+- **Secrets management** — virtiofs mounts to `/run/secrets/`; gateway-token is regenerated on every boot
+- **Prompt injection defense** — [openclaw-defender](https://github.com/nyosegawa/openclaw-defender) 3-layer pipeline (regex → ML classifiers → LLM judgment)
+- **OAuth isolation** — Google OAuth tokens are confined to the gogcli VM; SSH `command=` restricts allowed subcommands
+- **Auditing** — auditd monitors all access to secrets directories
 
-## 依存 flake
+## Flake Dependencies
 
-- [microvm.nix](https://github.com/microvm-nix/microvm.nix) — Cloud Hypervisor ベースの NixOS microVM
-- [nix-openclaw](https://github.com/openclaw/nix-openclaw) — OpenClaw Home Manager モジュール + overlay
-- [nix-openclaw-defender](https://github.com/ryoooo/nix-openclaw-defender) — 3 層防御プラグインの Nix パッケージ + ML サーバー NixOS モジュール
-- [nix-steipete-tools/gogcli](https://github.com/openclaw/nix-steipete-tools) — Google Workspace CLI スキル
+- [microvm.nix](https://github.com/microvm-nix/microvm.nix) — Cloud Hypervisor-based NixOS microVMs
+- [nix-openclaw](https://github.com/openclaw/nix-openclaw) — OpenClaw Home Manager module + overlay
+- [nix-openclaw-defender](https://github.com/ryoooo/nix-openclaw-defender) — 3-layer defender plugin Nix package + ML server NixOS modules
+- [nix-steipete-tools/gogcli](https://github.com/openclaw/nix-steipete-tools) — Google Workspace CLI skill
 
-## 注意
+## Note
 
-このリポジトリは技術記事用の公開コードベースです。デスクトップ環境 (Hyprland, WezTerm 等) の設定は省略しています。`hardware-configuration.nix` は各自の環境で `nixos-generate-config` により生成してください。
+This repository is a public reference codebase for a technical article. Desktop environment configuration (Hyprland, WezTerm, etc.) has been omitted. Generate your own `hardware-configuration.nix` with `nixos-generate-config`.
