@@ -26,7 +26,7 @@ Declarative NixOS configuration that isolates an AI agent ([OpenClaw](https://op
 |---|---|
 | `flake.nix` | Flake inputs (nixpkgs, home-manager, microvm, nix-openclaw, nix-openclaw-defender, etc.) |
 | `configuration.nix` | Host config: microVM networking (bridge + NAT), nftables, Unbound, auditd, secrets services |
-| `vms/openclaw.nix` | OpenClaw VM: Gateway, defender plugin, ML servers, Docker, Home Manager |
+| `vms/openclaw.nix` | OpenClaw VM: Gateway, defender plugin, ML servers, Home Manager |
 | `vms/gogcli.nix` | gogcli VM: Google Workspace CLI isolation, SSH `command=` restriction, audit logging |
 | `docs/SOUL.md` | Agent character definition |
 | `docs/AGENTS.md` | Tool execution policy (read auto-exec / write requires approval) |
